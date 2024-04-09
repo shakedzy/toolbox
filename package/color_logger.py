@@ -1,18 +1,11 @@
 import logging
 from types import TracebackType
-from typing import Mapping, Dict, Literal
+from typing import Mapping, Dict
+from ._types import Color
 
-_DEFAULT_LOG_LEVEL = logging.DEBUG
+
+_DEFAULT_LOG_LEVEL = logging.INFO
 _DEFAULT_LOGGER_NAME = "root"
-
-Color = Literal[
-    "red",
-    "green",
-    "yellow",
-    "blue",
-    "magenta",
-    "cyan"
-]
 
 
 class ColorLogger(logging.Logger):
@@ -66,7 +59,12 @@ class ColorLogger(logging.Logger):
         if color:
             msg = self._add_color(str(msg), color)
         return super().critical(msg, *args, exc_info=exc_info, stack_info=stack_info, stacklevel=stacklevel, extra=extra)
-    
+
+
+def set_default_level(level: int | str) -> None:
+    global _DEFAULT_LOG_LEVEL
+    _DEFAULT_LOG_LEVEL = level
+
 
 def get_logger(name: str| None = None, level: str | int | None = None):
     return ColorLogger(name or _DEFAULT_LOGGER_NAME, level=level or _DEFAULT_LOG_LEVEL)
