@@ -24,7 +24,7 @@ class Settings:
                 raise ValueError('No config files supplied to an uninitialized instance!')
             else:
                 get_logger().info(f'Loading config files: {str(_CONFIG_FILES_PATHS)}')
-                cls.settings = Dynaconf(
+                cls._settings = Dynaconf(
                     settings_files=_CONFIG_FILES_PATHS,
                     environments=False,
                     merge_enabled=True
@@ -34,19 +34,19 @@ class Settings:
 
     def __getattr__(self, name):
         try:
-            return getattr(self.settings, name)
+            return getattr(self._settings, name)
         except AttributeError:
             raise AttributeError(f"'{type(self).__name__}' object has no attribute '{name}'")
     
     def __setattr__(self, name, value):
-        if name == 'settings':
-            # Handle setting the 'settings' attribute directly.
+        if name == '_settings':
+            # Handle setting the '_settings' attribute directly.
             # Use super().__setattr__() to avoid infinite recursion.
             super().__setattr__(name, value)
         else:
-            # Attempt to set the attribute on the 'settings' object.
+            # Attempt to set the attribute on the '_settings' object.
             try:
-                setattr(self.settings, name, value)
+                setattr(self._settings, name, value)
             except AttributeError:
                 # If it fails, set the attribute normally.
                 super().__setattr__(name, value)
